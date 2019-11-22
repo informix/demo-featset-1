@@ -1,0 +1,48 @@
+Assuming you're reading this in a running demo-featset-1 container, you already 
+have Informix IDS installed here, in /opt/ibm/informix. This is your "Informix
+Directory", and in order to use the product you'll need to set INFORMIXDIR
+to that directory, as in:
+
+export INFORMIXDIR=/opt/ibm/informix
+
+Now add $INFORMIXDIR/bin to your path:
+
+export PATH=$INFORMIXDIR/bin:$PATH
+
+Another critical parameter, ONCONFIG, points to your configuration file. That 
+file must always be located under $INFORMIXDIR/etc, so a relative path is used.
+For example:
+
+export ONCONFIG=onconfig.fs1
+
+There are hundreds of configuration parameters you *can* put in that file, but 
+for now just put these lines in $INFORMIXDIR/etc/$ONCONFIG:
+
+ROOTPATH   /opt/ibm/localdata/rootchunk
+DBSERVERNAME fs1
+MSGPATH    /opt/ibm/localdata/online.log
+
+Now create your root path with the correct ownerships and permissions:
+
+touch /opt/ibm/localdata/rootchunk
+chown informix:informix /opt/ibm/localdata/rootchunk
+chmod 660 /opt/ibm/localdata/rootchunk
+
+In order for clients and utilities to connect to your server they need to know 
+its name, so set the INFORMIXSERVER environment variable like so:
+
+export INFORMIXSERVER=fs1
+
+There's just one more step. You need to create an "sqlhosts" file and add a
+line to it. By default the server will look for an $INFORMIXDIR/etc/sqlhosts
+file, so let's take advantage of that simplicity and put the following line
+in that file:
+
+fs1  onipcshm  demo_featset_1  foo1
+
+
+In order to 
+. ./env.sh
+
+
+

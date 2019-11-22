@@ -1,0 +1,15 @@
+version: '3'
+services:
+  informix-server:
+      image: "ibmcom/informix-developer-database"
+      container_name: "demo_featset_1"
+      hostname: "demo_featset_1"
+      environment:
+          LICENSE: 'accept'
+          CONFIGURE_INIT: 'setup.sh'
+      privileged: true
+      ports:
+         - 27018:27018
+         - 9088:9088
+      volumes:
+         - ${PWD}/informix-server:/opt/ibm/files
