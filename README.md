@@ -3,9 +3,6 @@
 ## Default compose file:
     docker-compose.yml
 
-## Full Documentation
-1.  See __doc__ folder
-
 ## Quickstart Steps
 
 ### Pre-requisites
@@ -14,7 +11,8 @@
 
 ### Start docker compose:
 1.  cd to project directory 
-2.  Run __chmod -R 777 *__ 
+2.  On Unix, run __chmod -R 777 *__ 
+    On Windows, make sure all drives are shared in docker
 3.  Run __docker-compose up__
 
 

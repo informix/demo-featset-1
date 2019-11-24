@@ -1,15 +1,15 @@
 Assuming you're reading this in a running demo-featset-1 container, you already 
 have Informix IDS installed here, in /opt/ibm/informix. This is your "Informix
-Directory", and in order to use the product you'll need to set INFORMIXDIR
-to that directory, as in:
+Directory", and in order to use IDS you'll need to set INFORMIXDIR to that 
+directory, as in:
 
 export INFORMIXDIR=/opt/ibm/informix
 
 Now add $INFORMIXDIR/bin to your path:
 
-export PATH=$INFORMIXDIR/bin:$PATH
+export PATH=":${INFORMIXDIR}/bin:$INFORMIXDIR/jvm/jre/bin:.:${PATH}"
 
-Another critical parameter, ONCONFIG, points to your configuration file. That 
+Another needed parameter, ONCONFIG, points to your configuration file. That 
 file must always be located under $INFORMIXDIR/etc, so a relative path is used.
 For example:
 
@@ -18,9 +18,12 @@ export ONCONFIG=onconfig.fs1
 There are hundreds of configuration parameters you *can* put in that file, but 
 for now just put these lines in $INFORMIXDIR/etc/$ONCONFIG:
 
-ROOTPATH   /opt/ibm/localdata/rootchunk
+ROOTPATH     /opt/ibm/localdata/rootchunk
+ROOTSIZE     500000
 DBSERVERNAME fs1
-MSGPATH    /opt/ibm/localdata/online.log
+MSGPATH      /opt/ibm/localdata/online.log
+LOGFILES     10
+LOGSIZE      10000
 
 Now create your root path with the correct ownerships and permissions:
 
@@ -28,21 +31,45 @@ touch /opt/ibm/localdata/rootchunk
 chown informix:informix /opt/ibm/localdata/rootchunk
 chmod 660 /opt/ibm/localdata/rootchunk
 
-In order for clients and utilities to connect to your server they need to know 
-its name, so set the INFORMIXSERVER environment variable like so:
+In order for client programs and utilities to connect to your server they 
+need to know its name, so set the INFORMIXSERVER environment variable like so:
 
 export INFORMIXSERVER=fs1
 
-There's just one more step. You need to create an "sqlhosts" file and add a
-line to it. By default the server will look for an $INFORMIXDIR/etc/sqlhosts
-file, so let's take advantage of that simplicity and put the following line
-in that file:
+One more step and you'll be ready to roll. You need to create an "sqlhosts" 
+file and add a line to it. By default the server will look for an 
+$INFORMIXDIR/etc/sqlhosts file, so let's take advantage of that simplicity 
+and put the following line in that file:
 
 fs1  onipcshm  demo_featset_1  foo1
 
+You should now be able to run the following command to initialize your IDS
+instance from scratch:
 
-In order to 
-. ./env.sh
+oninit -iwy
 
+Three things to note:
 
+1) Your instance must be shut down in order to run oninit.
+2) When you run oninit -i, your instance will be reinitialized and any
+   data you had in there previously will be lost.
+3) By default IDS will prevent oninit -i from destroying an existing instance.
+   To override the default you will need to set the FULL_DISK_INIT parameter to
+   1 in your onconfig file, and reset it to 1 every time you subsequently run
+   oninit -i.
+
+In the future if you would like to use a script to perform all the above
+steps (and a couple of extra ones), simply run:
+
+sh init_from_scratch.sh
+
+To play with some common onstat commands that provide various windows into your running server, run:
+
+sh view_instance.sh
+
+For a demonstration of basic Storage Provisioning operations, run:
+
+sh demo-sp.sh
+
+Have fun, send feedback, and report glitches to me (jc). Thanks!
 
